@@ -91,35 +91,29 @@ async function submitQuote(e) {
   const msg = document.getElementById('q-msg');
   btn.disabled = true;
   btn.textContent = 'Sending...';
-  const lead = {
+  const contact = {
     id: crypto.randomUUID(),
     business: document.getElementById('q-name').value.trim(),
     contact: document.getElementById('q-name').value.trim(),
     phone: document.getElementById('q-phone').value.trim(),
     email: document.getElementById('q-email').value.trim(),
-    service: document.getElementById('q-service').value,
-    source: 'Website Form',
+    address: '',
+    status: 'lead',
     notes: document.getElementById('q-details').value.trim(),
-    status: 'new',
-    created_at: new Date().toISOString(),
-    tasks: [{
-      id: crypto.randomUUID(),
-      action: 'Call lead',
-      due: new Date().toISOString().split('T')[0],
-      note: 'New website inquiry — call immediately',
-      done: false,
-      created: new Date().toISOString()
-    }]
+    services: [{ service: document.getElementById('q-service').value, frequency:'', address:'', rate:'', monthlyRate:'', cleanerRate:'', tax:'taxable', cleaner:'', hours:'', nextclean:'', extraCleaners:[] }],
+    invoices: [],
+    balance: '0',
+    balanceDue: ''
   };
   try {
-    const res = await fetch('https://twohzspcpnoeoutxdcdz.supabase.co/rest/v1/leads', {
+    const res = await fetch('https://twohzspcpnoeoutxdcdz.supabase.co/rest/v1/contacts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': 'sb_publishable_MbIxbCay3ePDbYBd68jC5g_8n_fNiI6',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify(lead)
+      body: JSON.stringify(contact)
     });
     if (res.ok) {
       msg.style.display = 'block';
@@ -132,11 +126,11 @@ async function submitQuote(e) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: lead.contact,
-            phone: lead.phone,
-            email: lead.email,
-            service: lead.service,
-            notes: lead.notes
+            name: contact.contact,
+            phone: contact.phone,
+            email: contact.email,
+            service: contact.services[0].service,
+            notes: contact.notes
           })
         });
       } catch (_) { /* lead already saved; email is best-effort */ }
