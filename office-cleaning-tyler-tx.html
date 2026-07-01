@@ -134,6 +134,20 @@ async function submitQuote(e) {
       msg.style.color = 'var(--teal)';
       msg.textContent = 'Thanks! We will reach out within 24 hours.';
       document.getElementById('quote-form-el').reset();
+      // Best-effort lead-notification email — must not block or override the success message
+      try {
+        await fetch('https://twohzspcpnoeoutxdcdz.supabase.co/functions/v1/notify-lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: lead.contact,
+            phone: lead.phone,
+            email: lead.email,
+            service: lead.service,
+            notes: lead.notes
+          })
+        });
+      } catch (_) { /* lead already saved; email is best-effort */ }
     } else {
       throw new Error('Failed');
     }
