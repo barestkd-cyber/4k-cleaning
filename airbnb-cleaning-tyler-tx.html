@@ -123,14 +123,14 @@ async function submitQuote(e) {
     notes: document.getElementById('q-details').value.trim(),
     status: 'new',
     created_at: new Date().toISOString(),
-    tasks: JSON.stringify([{
+    tasks: [{
       id: crypto.randomUUID(),
       action: 'Call lead',
       due: new Date().toISOString().split('T')[0],
       note: 'New website inquiry — call immediately',
       done: false,
       created: new Date().toISOString()
-    }])
+    }]
   };
   try {
     const res = await fetch('https://twohzspcpnoeoutxdcdz.supabase.co/rest/v1/leads', {
